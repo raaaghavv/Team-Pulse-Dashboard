@@ -1,6 +1,6 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
-import { updateTaskProgress } from '../redux/slices/membersSlice';
+import React from "react";
+import { useDispatch } from "react-redux";
+import { updateTaskProgress } from "../redux/slices/membersSlice";
 
 const TaskList = ({ tasks, memberId }) => {
   const dispatch = useDispatch();
@@ -10,63 +10,75 @@ const TaskList = ({ tasks, memberId }) => {
   };
 
   if (!tasks || tasks.length === 0) {
-    return <p style={{ textAlign: 'center', fontSize: '1.1em', color: '#666' }}>No tasks assigned yet.</p>;
+    return (
+      <p className="text-center text-lg text-gray-600 dark:text-gray-400 mt-8">
+        No tasks assigned yet.
+      </p>
+    );
   }
 
   return (
-    <div style={{ marginTop: '20px' }}>
-      <h3 style={{ color: '#333' }}>Your Tasks</h3>
-      {tasks.map(task => (
-        <div key={task.taskId} style={{
-          border: '1px solid #eee',
-          borderRadius: '6px',
-          padding: '15px',
-          margin: '10px 0',
-          backgroundColor: '#fff',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.08)'
-        }}>
-          <h4 style={{ margin: '0 0 8px', color: '#555' }}>{task.title}</h4>
-          <p style={{ margin: '0 0 10px', fontSize: '0.9em', color: '#777' }}>Due Date: {task.dueDate}</p>
-          <div style={{ marginBottom: '10px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9em', fontWeight: 'bold' }}>Progress: {task.progress}%</label>
-            <div style={{
-              width: '100%',
-              backgroundColor: '#e0e0e0',
-              borderRadius: '5px',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                width: `${task.progress}%`,
-                height: '10px',
-                backgroundColor: task.isCompleted ? '#28a745' : '#007bff',
-                borderRadius: '5px'
-              }}></div>
+    <div className="space-y-4 max-h-96 overflow-y-auto custom-scrollbar pr-2">
+      {tasks.map((task) => (
+        <div
+          key={task.taskId}
+          className="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-600 transition-colors duration-300 flex flex-col"
+        >
+          <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
+            {task.title}
+          </h4>
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+            Due Date: {task.dueDate}
+          </p>
+          <div className="mb-3">
+            <div className="flex justify-between text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+              <span>Progress:</span>
+              <span>{task.progress}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-600">
+              <div
+                className="h-2.5 rounded-full"
+                style={{
+                  width: `${task.progress}%`,
+                  backgroundColor: task.isCompleted ? "#28a745" : "#007bff",
+                }}
+              ></div>
             </div>
           </div>
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div className="flex gap-2 justify-end mt-auto">
             <button
               onClick={() => handleProgressChange(task.taskId, -10)}
               disabled={task.progress === 0}
-              style={{
-                padding: '8px 12px', backgroundColor: '#dc3545', color: 'white',
-                border: 'none', borderRadius: '5px', cursor: 'pointer',
-                opacity: task.progress === 0 ? 0.6 : 1
-              }}
+              className={`px-3 py-1 text-sm rounded-md transition duration-200
+                ${
+                  task.progress === 0
+                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                    : "bg-red-500 text-white hover:bg-red-600 focus:ring-red-500"
+                }
+                focus:outline-none focus:ring-2 focus:ring-opacity-50
+              `}
             >
               -10%
             </button>
             <button
               onClick={() => handleProgressChange(task.taskId, 10)}
               disabled={task.progress === 100}
-              style={{
-                padding: '8px 12px', backgroundColor: '#28a745', color: 'white',
-                border: 'none', borderRadius: '5px', cursor: 'pointer',
-                opacity: task.progress === 100 ? 0.6 : 1
-              }}
+              className={`px-3 py-1 text-sm rounded-md transition duration-200
+                ${
+                  task.progress === 100
+                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                    : "bg-green-500 text-white hover:bg-green-600 focus:ring-green-500"
+                }
+                focus:outline-none focus:ring-2 focus:ring-opacity-50
+              `}
             >
               +10%
             </button>
-            {task.isCompleted && <span style={{ marginLeft: 'auto', padding: '5px 10px', backgroundColor: '#28a745', color: 'white', borderRadius: '5px', fontSize: '0.8em' }}>COMPLETED</span>}
+            {task.isCompleted && (
+              <span className="ml-auto px-3 py-1 bg-green-600 text-white text-xs font-semibold rounded-full flex items-center">
+                Completed
+              </span>
+            )}
           </div>
         </div>
       ))}
