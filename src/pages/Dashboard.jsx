@@ -9,24 +9,14 @@ const Dashboard = () => {
 
   if (!currentUser) {
     return (
-      <div
-        style={{
-          textAlign: "center",
-          marginTop: "50px",
-          fontSize: "1.1em",
-          color: "#666",
-        }}
-      >
+      <div className="flex items-center justify-center h-[calc(100vh-6rem)] text-xl text-gray-700 dark:text-gray-300 transition-colors duration-300">
         Loading dashboard content...
       </div>
     );
   }
 
   return (
-    <div
-      className="dashboard-page-content-container"
-      style={{ padding: "20px" }}
-    >
+    <div className="flex-grow p-4 bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-6rem)] transition-colors duration-300">
       {currentRole === "TeamLead" ? (
         <TeamLeadDashboard />
       ) : (
