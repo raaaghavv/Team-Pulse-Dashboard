@@ -1,51 +1,63 @@
-import React from 'react';
+import React from "react";
 
 const MemberCard = ({ member }) => {
-  const getStatusColor = (status) => {
+  const getStatusClasses = (status) => {
     switch (status) {
-      case 'Working': return '#28a745'; // Green
-      case 'Offline': return '#ffc107'; // Yellow
-      case 'In Meeting': return '#dc3545'; // Red
-      case 'On Break': return '#007bff'; // Blue 
-      default: return '#6c757d'; // Gray
+      case "Working":
+        return "bg-green-500 text-white";
+      case "Offline":
+        return "bg-amber-500 text-white";
+      case "In Meeting":
+        return "bg-red-500 text-white";
+      case "On Break":
+        return "bg-blue-500 text-white";
+      default:
+        return "bg-gray-500 text-white";
     }
   };
 
   const totalTasks = member.tasks.length;
-  const completedTasks = member.tasks.filter(task => task.isCompleted).length;
-  const completionPercentage = totalTasks > 0 ? (completedTasks / totalTasks * 100).toFixed(0) : 0;
+  const completedTasks = member.tasks.filter((task) => task.isCompleted).length;
+  const completionPercentage =
+    totalTasks > 0 ? ((completedTasks / totalTasks) * 100).toFixed(0) : 0;
 
   return (
-    <div style={{
-      border: '1px solid #ddd',
-      borderRadius: '8px',
-      padding: '15px',
-      margin: '10px 0',
-      backgroundColor: '#fefefe',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '8px'
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <img src={member.picture} alt={member.name} style={{ borderRadius: '50%', width: '50px', height: '50px', objectFit: 'cover' }} />
-        <h3 style={{ margin: '0', color: '#333', fontSize: '1.2em' }}>{member.name}</h3>
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md p-4 flex flex-col space-y-3 transition-colors duration-300 max-h-64 overflow-y-auto custom-scrollbar">
+      <div className="flex items-center space-x-3">
+        <img
+          src={
+            member.picture ||
+            `https://via.placeholder.com/50/a0aec0/ffffff?text=${member.name[0]}`
+          }
+          alt={member.name}
+          className="w-12 h-12 rounded-full object-cover border-2 border-blue-400 dark:border-blue-300"
+        />
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+          {member.name}
+        </h3>
       </div>
-      <p style={{ margin: '0', fontSize: '0.9em', color: '#555' }}>Email: {member.email}</p>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <span style={{ fontWeight: 'bold', marginRight: '5px' }}>Status:</span>
-        <span style={{
-          backgroundColor: getStatusColor(member.currentStatus),
-          color: 'white',
-          padding: '4px 8px',
-          borderRadius: '5px',
-          fontSize: '0.8em'
-        }}>
+      <p className="text-sm text-gray-600 dark:text-gray-300 truncate">
+        Email: {member.email}
+      </p>
+      <div className="flex items-center">
+        <span className="font-medium mr-2 text-gray-700 dark:text-gray-200">
+          Status:
+        </span>
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusClasses(
+            member.currentStatus
+          )}`}
+        >
           {member.currentStatus}
         </span>
       </div>
-      <p style={{ margin: '0', fontSize: '0.9em', color: '#555' }}>
-        Tasks Completed: {completedTasks}/{totalTasks} ({completionPercentage}%)
+      <p className="text-sm text-gray-600 dark:text-gray-300">
+        Tasks Completed: <span className="font-semibold">{completedTasks}</span>
+        /<span className="font-semibold">{totalTasks}</span> (
+        <span className="font-bold text-blue-600 dark:text-blue-400">
+          {completionPercentage}%
+        </span>
+        )
       </p>
     </div>
   );
