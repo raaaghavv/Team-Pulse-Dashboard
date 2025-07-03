@@ -1,12 +1,11 @@
-import { configureStore } from "@reduxjs/toolkit";
-import membersSlice from "./slices/membersSlice";
-import roleSlice from "./slices/roleSlice";
+import { configureStore } from '@reduxjs/toolkit';
+import membersReducer from './slices/membersSlice';
+import roleReducer from './slices/roleSlice';
 
 const store = configureStore({
   reducer: {
-    role: roleSlice,
-    members: membersSlice,
+    members: membersReducer,
+    role: roleReducer,
   },
 });
-
 export default store;
