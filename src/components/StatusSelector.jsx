@@ -5,7 +5,7 @@ import { updateMemberStatus } from '../redux/slices/membersSlice';
 const StatusSelector = ({ memberId, currentStatus }) => {
   const dispatch = useDispatch();
 
-  const statuses = ['Active', 'On Leave', 'Busy', 'break']; 
+  const statuses = ['Working', 'Offline', 'In Meeting', 'On Break']; 
 
   const handleStatusChange = (newStatus) => {
     dispatch(updateMemberStatus({ memberId, status: newStatus })); 
