@@ -1,3 +1,4 @@
+// src/App.jsx
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchMemberDetails } from "./redux/slices/membersSlice";
@@ -17,7 +18,7 @@ function App() {
     if (membersStatus === "idle" || !membersStatus) {
       dispatch(fetchMemberDetails());
     }
-  }, []);
+  }, [membersStatus, dispatch]);
 
   useEffect(() => {
     if (membersStatus === "succeeded" && members.length > 0 && !currentUser) {
@@ -51,7 +52,7 @@ function App() {
   if (membersStatus === "loading" || !currentUser) {
     return (
       <div
-        style={{ textAlign: "center", marginTop: "50px", fontSize: "1.2em" }}
+        className="flex items-center justify-center min-h-screen text-xl text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 transition-colors duration-300 w-full"
       >
         Loading application data...
       </div>
@@ -61,12 +62,7 @@ function App() {
   if (membersStatus === "failed") {
     return (
       <div
-        style={{
-          textAlign: "center",
-          marginTop: "50px",
-          color: "red",
-          fontSize: "1.2em",
-        }}
+        className="flex items-center justify-center min-h-screen text-xl text-red-600 dark:text-red-400 bg-gray-50 dark:bg-gray-900 transition-colors duration-300 w-full"
       >
         Failed to load data. Please try again.
       </div>
@@ -75,19 +71,14 @@ function App() {
 
   return (
     <div
-      className="App"
-      style={{
-        fontFamily: "Arial, sans-serif",
-        maxWidth: "1200px",
-        margin: "20px auto",
-        padding: "20px",
-        border: "1px solid #eee",
-        borderRadius: "8px",
-        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-      }}
+      className="App font-sans w-full min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300" // Removed padding from here
     >
-      <Header />
-      <Dashboard />
+      <div className="w-full flex flex-col flex-grow border-x border-b border-gray-200 dark:border-gray-700 rounded-b-lg shadow-xl bg-white dark:bg-gray-800 overflow-hidden"> {/* Removed max-w-7xl mx-auto, added border-x border-b and rounded-b-lg */}
+        <Header />
+        <main className="flex-grow p-5 overflow-auto">
+          <Dashboard />
+        </main>
+      </div>
     </div>
   );
 }
