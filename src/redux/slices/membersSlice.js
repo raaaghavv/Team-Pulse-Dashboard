@@ -16,7 +16,7 @@ export const fetchMemberDetails = createAsyncThunk(
         email: user.email,
         picture: user.picture.thumbnail,
         role: index === 0 ? `TeamLead` : `TeamMember`,
-        currentStatus: `break`,
+        currentStatus: `Offline`,
         tasks: [],
       }));
       
