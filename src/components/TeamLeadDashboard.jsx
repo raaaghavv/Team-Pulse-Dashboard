@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import MemberCard from "./MemberCard";
 import TaskForm from "./TaskForm";
+import AllTasksList from "./AllTasksList";
 import { Bar, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -57,11 +58,19 @@ const TeamLeadDashboard = () => {
       if (sortBy === "name") {
         comparison = a.name.localeCompare(b.name);
       } else if (sortBy === "taskCompletion") {
-        const aCompleted = a.tasks.filter((t) => t.isCompleted).length;
-        const bCompleted = b.tasks.filter((t) => t.isCompleted).length;
-        const aTotal = a.tasks.length || 1;
-        const bTotal = b.tasks.length || 1;
-        comparison = aCompleted / aTotal - bCompleted / bTotal;
+        const aTotalProgress = a.tasks.reduce(
+          (sum, task) => sum + task.progress,
+          0
+        );
+        const bTotalProgress = b.tasks.reduce(
+          (sum, task) => sum + task.progress,
+          0
+        );
+        const aAvgProgress =
+          a.tasks.length > 0 ? aTotalProgress / a.tasks.length : 0;
+        const bAvgProgress =
+          b.tasks.length > 0 ? bTotalProgress / b.tasks.length : 0;
+        comparison = aAvgProgress - bAvgProgress;
       } else if (sortBy === "totalTasks") {
         comparison = a.tasks.length - b.tasks.length;
       }
@@ -321,6 +330,7 @@ const TeamLeadDashboard = () => {
               <strong>Total Tasks Completed:</strong> {totalTasksCompleted}
             </p>
           </div>
+          <AllTasksList members={teamMembersOnly} />
 
           {/* Assigned Tasks List */}
           {/* <div className="flex-grow overflow-y-auto pr-2 custom-scrollbar">
