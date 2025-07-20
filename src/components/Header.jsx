@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { switchRole, setUser } from "../redux/slices/roleSlice";
+import MemberSelectionModal from "./MemberSelectionModal";
 
 const SunIcon = () => (
   <svg
@@ -69,6 +70,7 @@ function Header() {
   const allMembers = useSelector((state) => state.members.list);
 
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  const [isModalOpen, setIsModalOpen] = useState(false); 
 
   useEffect(() => {
     if (theme === "dark") {
@@ -85,22 +87,14 @@ function Header() {
 
   const handleRoleToggle = () => {
     if (currentRole === "TeamLead") {
-      // Switch to Team Member mode
-      const anyTeamMember = allMembers.find((m) => m.role === "TeamMember");
-      if (anyTeamMember) {
-        dispatch(setUser(anyTeamMember));
-        dispatch(switchRole("TeamMember"));
-      } else {
-        console.warn("No Team Member found to switch to.");
-      }
+      // Open the modal to select a team member
+      setIsModalOpen(true);
     } else {
-      // Switch to Team Lead mode
+      // Switch back to Team Lead mode
       const teamLead = allMembers.find((m) => m.role === "TeamLead");
       if (teamLead) {
         dispatch(setUser(teamLead));
         dispatch(switchRole("TeamLead"));
-      } else {
-        console.warn("No Team Lead found to switch to.");
       }
     }
   };
@@ -121,54 +115,61 @@ function Header() {
   }
 
   return (
-    <header className="bg-gray-100 dark:bg-gray-800 shadow-md p-4 flex justify-between items-center transition-colors duration-300">
-      <div className="text-2xl font-extrabold text-blue-600 dark:text-blue-400">
-        TeamPulse
-      </div>
-
-      <div className="flex items-center space-x-6">
-        {/* Current User Profile */}
-        <div className="flex items-center space-x-3">
-          {currentUser.picture && ( // Only render img if picture URL exists
-            <img
-              src={currentUser.picture}
-              alt={currentUser.name}
-              className="w-10 h-10 rounded-full border-2 border-blue-400 dark:border-blue-300 object-cover"
-              onError={(e) => {
-                e.target.style.display = "none"; 
-              }}
-            />
-          )}
-          <div>
-            <p className="text-gray-800 dark:text-gray-100 font-semibold text-sm">
-              {currentUser.name}
-            </p>
-            <p className="text-gray-600 dark:text-gray-300 text-xs">
-              {currentUser.role}
-            </p>
-          </div>
+    <>
+      <header className="bg-white dark:bg-gray-800 shadow-md p-4 flex justify-between items-center transition-colors duration-300">
+        <div className="text-2xl font-extrabold text-blue-600 dark:text-blue-400">
+          TeamPulse
         </div>
 
-        {/* Theme Toggle Button */}
-        <button
-          onClick={toggleTheme}
-          className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300 shadow-sm focus:outline-none "
-          aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
-        >
-          {theme === "light" ? <SunIcon /> : <MoonIcon />}
-        </button>
+        <div className="flex items-center space-x-6">
+          {/* Current User Profile */}
+          <div className="flex items-center space-x-3">
+            {currentUser.picture && ( // Only render img if picture URL exists
+              <img
+                src={currentUser.picture}
+                alt={currentUser.name}
+                className="w-10 h-10 rounded-full border-2 border-blue-400 dark:border-blue-300 object-cover"
+                onError={(e) => {
+                  e.target.style.display = "none";
+                }}
+              />
+            )}
+            <div>
+              <p className="text-gray-800 dark:text-gray-100 font-semibold text-sm">
+                {currentUser.name}
+              </p>
+              <p className="text-gray-600 dark:text-gray-300 text-xs">
+                {currentUser.role}
+              </p>
+            </div>
+          </div>
 
-        {/* Switch Role Button */}
-        <button
-          onClick={handleRoleToggle}
-          className="px-4 py-2 rounded-md bg-blue-500 text-white text-sm font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300 shadow-sm focus:outline-none "
+            aria-label={`Switch to ${
+              theme === "light" ? "dark" : "light"
+            } theme`}
+          >
+            {theme === "light" ? <SunIcon /> : <MoonIcon />}
+          </button>
+
+          {/* Switch Role Button */}
+          <button
+            onClick={handleRoleToggle}
+            className="px-4 py-2 rounded-md bg-blue-500 text-white text-sm font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50
                      dark:bg-blue-700 dark:hover:bg-blue-800 dark:focus:ring-blue-700 transition duration-200"
-        >
-          Switch to {currentRole === "TeamLead" ? "Team Member" : "Team Lead"}{" "}
-          View
-        </button>
-      </div>
-    </header>
+          >
+            Switch to {currentRole === "TeamLead" ? "Team Member" : "Team Lead"}{" "}
+            View
+          </button>
+        </div>
+      </header>
+      {isModalOpen && (
+        <MemberSelectionModal onClose={() => setIsModalOpen(false)} />
+      )}
+    </>
   );
 }
 
