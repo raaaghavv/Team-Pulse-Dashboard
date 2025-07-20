@@ -18,8 +18,13 @@ const MemberCard = ({ member }) => {
 
   const totalTasks = member.tasks.length;
   const completedTasks = member.tasks.filter((task) => task.isCompleted).length;
+
+  const totalProgress = member.tasks.reduce(
+    (sum, task) => sum + task.progress,
+    0
+  );
   const completionPercentage =
-    totalTasks > 0 ? ((completedTasks / totalTasks) * 100).toFixed(0) : 0;
+    totalTasks > 0 ? (totalProgress / totalTasks).toFixed(0) : 0;
 
   return (
     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md p-4 flex flex-col space-y-3 transition-colors duration-300 max-h-64 overflow-y-auto custom-scrollbar">
