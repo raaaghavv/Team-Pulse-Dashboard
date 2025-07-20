@@ -58,9 +58,6 @@ const TaskForm = ({ onClose }) => {
 
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md transition-colors duration-300 max-h-[80vh] overflow-y-auto custom-scrollbar">
-      <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-5 text-center">
-        Assign New Task
-      </h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label
