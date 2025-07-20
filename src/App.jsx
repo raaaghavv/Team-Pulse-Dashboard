@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchMemberDetails } from "./redux/slices/membersSlice";
@@ -6,6 +5,7 @@ import { setUser, switchRole } from "./redux/slices/roleSlice";
 
 import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard";
+import MemberInactivityManager from "./components/MemberInactivityManager";
 
 function App() {
   const dispatch = useDispatch();
@@ -13,6 +13,7 @@ function App() {
   const currentUser = useSelector((state) => state.role.currentUser);
   const members = useSelector((state) => state.members.list);
   const membersStatus = useSelector((state) => state.members.status);
+  const teamMembers = members.filter((member) => member.role === "TeamMember");
 
   useEffect(() => {
     if (membersStatus === "idle" || !membersStatus) {
@@ -51,9 +52,7 @@ function App() {
 
   if (membersStatus === "loading" || !currentUser) {
     return (
-      <div
-        className="flex items-center justify-center min-h-screen text-xl text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 transition-colors duration-300 w-full"
-      >
+      <div className="flex items-center justify-center min-h-screen text-xl text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 transition-colors duration-300 w-full">
         Loading application data...
       </div>
     );
@@ -61,9 +60,7 @@ function App() {
 
   if (membersStatus === "failed") {
     return (
-      <div
-        className="flex items-center justify-center min-h-screen text-xl text-red-600 dark:text-red-400 bg-gray-50 dark:bg-gray-900 transition-colors duration-300 w-full"
-      >
+      <div className="flex items-center justify-center min-h-screen text-xl text-red-600 dark:text-red-400 bg-gray-50 dark:bg-gray-900 transition-colors duration-300 w-full">
         Failed to load data. Please try again.
       </div>
     );
@@ -73,7 +70,10 @@ function App() {
     <div
       className="App font-sans w-full min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300" // Removed padding from here
     >
-      <div className="w-full flex flex-col flex-grow border-x border-b border-gray-200 dark:border-gray-700 rounded-b-lg shadow-xl bg-white dark:bg-gray-800 overflow-hidden"> {/* Removed max-w-7xl mx-auto, added border-x border-b and rounded-b-lg */}
+      {teamMembers.map((member) => (
+        <MemberInactivityManager key={member.id} member={member} />
+      ))}
+      <div className="w-full flex flex-col flex-grow border-x border-b border-gray-200 dark:border-gray-700 rounded-b-lg shadow-xl bg-white dark:bg-gray-800 overflow-hidden">
         <Header />
         <main className="flex-grow p-5 overflow-auto">
           <Dashboard />
