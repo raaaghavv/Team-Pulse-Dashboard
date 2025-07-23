@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { switchRole, setUser } from "../redux/slices/roleSlice";
 import MemberSelectionModal from "./MemberSelectionModal";
@@ -46,7 +46,7 @@ const SunIcon = () => (
 const MoonIcon = () => (
   <svg
     className="w-5 h-5 text-indigo-500 dark:text-gray-300 transition-colors duration-300"
-    fill="#000000"
+    fill="#ffffff"
     viewBox="0 0 35 35"
     data-name="Layer 2"
     id="Layer_2"
@@ -70,7 +70,10 @@ function Header() {
   const allMembers = useSelector((state) => state.members.list);
 
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
   useEffect(() => {
     if (theme === "dark") {
@@ -87,10 +90,9 @@ function Header() {
 
   const handleRoleToggle = () => {
     if (currentRole === "TeamLead") {
-      // Open the modal to select a team member
+      setIsMenuOpen(false);
       setIsModalOpen(true);
     } else {
-      // Switch back to Team Lead mode
       const teamLead = allMembers.find((m) => m.role === "TeamLead");
       if (teamLead) {
         dispatch(setUser(teamLead));
@@ -98,6 +100,19 @@ function Header() {
       }
     }
   };
+
+  // --- Effect to close the menu when clicking outside ---
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   if (!currentUser) {
     return (
@@ -121,10 +136,19 @@ function Header() {
           TeamPulse
         </div>
 
-        <div className="flex items-center space-x-6">
-          {/* Current User Profile */}
+        {/* --- DESKTOP VIEW --- */}
+        <div className="hidden md:flex items-center gap-4">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300 shadow-sm focus:outline-none "
+            aria-label={`Switch to ${
+              theme === "light" ? "dark" : "light"
+            } theme`}
+          >
+            {theme === "light" ? <SunIcon /> : <MoonIcon />}
+          </button>
           <div className="flex items-center space-x-3">
-            {currentUser.picture && ( // Only render img if picture URL exists
+            {currentUser.picture && (
               <img
                 src={currentUser.picture}
                 alt={currentUser.name}
@@ -143,27 +167,59 @@ function Header() {
               </p>
             </div>
           </div>
-
-          {/* Theme Toggle Button */}
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300 shadow-sm focus:outline-none "
-            aria-label={`Switch to ${
-              theme === "light" ? "dark" : "light"
-            } theme`}
-          >
-            {theme === "light" ? <SunIcon /> : <MoonIcon />}
-          </button>
-
-          {/* Switch Role Button */}
           <button
             onClick={handleRoleToggle}
-            className="px-4 py-2 rounded-md bg-blue-500 text-white text-sm font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50
-                     dark:bg-blue-700 dark:hover:bg-blue-800 dark:focus:ring-blue-700 transition duration-200"
+            className="px-4 py-2 rounded-md bg-blue-500 text-white text-sm font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:bg-blue-700 dark:hover:bg-blue-800 dark:focus:ring-blue-700 transition duration-200"
           >
             Switch to {currentRole === "TeamLead" ? "Team Member" : "Team Lead"}{" "}
             View
           </button>
+        </div>
+
+        {/* --- MOBILE VIEW --- */}
+        <div ref={menuRef} className="md:hidden relative">
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {currentUser.picture && (
+              <img
+                src={currentUser.picture}
+                alt="Open menu"
+                className="w-10 h-10 rounded-full border-2 border-blue-400 dark:border-blue-300 object-cover"
+                onError={(e) => {
+                  e.target.style.display = "none";
+                }}
+              />
+            )}
+          </button>
+
+          {/* Dropdown Menu */}
+          {isMenuOpen && (
+            <div className="absolute top-12 right-0 w-60 bg-white dark:bg-gray-700 rounded-lg shadow-xl border dark:border-gray-600 z-50">
+              <div className="p-4 border-b dark:border-gray-600">
+                <p className="font-semibold text-gray-800 dark:text-gray-100">
+                  {currentUser.name}
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-300">
+                  {currentUser.role}
+                </p>
+              </div>
+              <div className="py-2">
+                <button
+                  onClick={handleRoleToggle}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+                >
+                  Switch to{" "}
+                  {currentRole === "TeamLead" ? "Team Member" : "Team Lead"}
+                </button>
+                <button
+                  onClick={toggleTheme}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex justify-between items-center"
+                >
+                  <span>Switch Theme</span>
+                  {theme === "light" ? <SunIcon /> : <MoonIcon />}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </header>
       {isModalOpen && (
