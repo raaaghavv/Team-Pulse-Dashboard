@@ -6,7 +6,7 @@ const AllTasksList = ({ members }) => {
   );
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mt-6">
+    <div>
       <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
         All Assigned Tasks
       </h3>
